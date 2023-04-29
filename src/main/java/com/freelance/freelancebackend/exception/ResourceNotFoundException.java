@@ -1,0 +1,23 @@
+package com.freelance.freelancebackend.exception;
+
+import com.freelance.freelancebackend.Constants;
+
+public class ResourceNotFoundException extends RuntimeException{
+
+    public ResourceNotFoundException(String resource) {
+        super(resource + Constants.NOT_FOUND);
+    }
+
+    public ResourceNotFoundException(Long id, String resource) {
+        super(resource + Constants.ID_FORMAT  + id + Constants.NOT_FOUND);
+    }
+
+    public ResourceNotFoundException(String username, String resource) {
+        super(resource + "USER: "  + username + Constants.NOT_FOUND);
+    }    
+
+    public ResourceNotFoundException(Long id, String resource, Long id2, String resource2) {
+        super(resource + Constants.ID_FORMAT + id + " " + resource2 + Constants.ID_FORMAT + Constants.NOT_FOUND);
+    }
+    
+}
