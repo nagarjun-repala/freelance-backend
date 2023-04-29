@@ -12,4 +12,8 @@ public class Constants {
     public static final String CANCEL = "CANCEL";
     public static final String FAILED = "FAILED";
     public static final String EMPTY = " EMPTY";
+    public static final String OPEN = "OPEN";
+    public static final String ACCEPT = "ACCEPT";
+    public static final String REJECT = "REJECT";
+    public static final String APPLIED = "APPLIED";
 }

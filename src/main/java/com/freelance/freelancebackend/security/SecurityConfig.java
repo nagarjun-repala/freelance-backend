@@ -9,6 +9,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import com.freelance.freelancebackend.security.filter.AuthenticationFilter;
 import com.freelance.freelancebackend.security.filter.ExceptionHandlerFilter;
 import com.freelance.freelancebackend.security.filter.JWTAuthorizationFilter;
@@ -27,17 +31,20 @@ public class SecurityConfig {
 
         authenticationFilter.setFilterProcessesUrl(SecurityConstants.LOGIN_PATH);
         http
+            .cors().and()
             .csrf().disable()
             .authorizeHttpRequests()
             .antMatchers().denyAll()
             .antMatchers(HttpMethod.POST, SecurityConstants.REGISTER_PATH).permitAll()            
-            .antMatchers(SecurityConstants.ADMIN_PATH).hasRole(SecurityConstants.ROLE_ADMIN)
-            .antMatchers(SecurityConstants.USER_PATH).hasAnyRole(SecurityConstants.ROLE_ADMIN, SecurityConstants.ROLE_USER)
-            .antMatchers(HttpMethod.GET).hasAnyRole(SecurityConstants.ROLE_ADMIN, SecurityConstants.ROLE_USER)
-            // .antMatchers(HttpMethod.POST, SecurityConstants.REGISTER_PATH).permitAll()
-            // .antMatchers(HttpMethod.DELETE, SecurityConstants.USER_CART_PATH).hasAnyRole(SecurityConstants.ROLE_ADMIN, SecurityConstants.ROLE_USER)
-            // .antMatchers(HttpMethod.DELETE).hasRole(SecurityConstants.ROLE_ADMIN)
+            // .antMatchers(SecurityConstants.ADMIN_PATH).hasRole(SecurityConstants.ROLE_ADMIN)
+            // .antMatchers(SecurityConstants.USER_PATH).hasAnyRole(SecurityConstants.ROLE_ADMIN, SecurityConstants.ROLE_USER)
             // .antMatchers(HttpMethod.GET).hasAnyRole(SecurityConstants.ROLE_ADMIN, SecurityConstants.ROLE_USER)
+            .antMatchers(HttpMethod.DELETE, "/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/**").permitAll()
+            // .antMatchers(HttpMethod.DELETE, "/**").hasAnyRole(SecurityConstants.ROLE_ADMIN, SecurityConstants.ROLE_USER)
+            // .antMatchers(HttpMethod.DELETE).hasRole(SecurityConstants.ROLE_ADMIN)
+            .antMatchers(HttpMethod.GET).hasAnyRole(SecurityConstants.ROLE_ADMIN, SecurityConstants.ROLE_USER)
             .anyRequest().authenticated()
             .and()
             .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
@@ -45,6 +52,17 @@ public class SecurityConfig {
             .addFilterAfter(new JWTAuthorizationFilter(), AuthenticationFilter.class)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
+    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
 

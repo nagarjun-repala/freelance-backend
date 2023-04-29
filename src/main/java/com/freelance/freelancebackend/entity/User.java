@@ -17,8 +17,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
+
+
 import lombok.*;
 
 @Getter
@@ -78,5 +82,14 @@ public class User {
   @JsonIgnore
   @ManyToMany(mappedBy = "users", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<Role> roles;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "users", cascade = CascadeType.ALL )
+  private List<Project> projects;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "users", cascade = CascadeType.ALL )
+  private List<ProjectQueue> projectQueue;
+
   
 }
