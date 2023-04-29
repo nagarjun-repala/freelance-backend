@@ -1,14 +1,20 @@
 package com.freelance.freelancebackend.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.freelance.freelancebackend.GlobalMethods;
 import com.freelance.freelancebackend.dto.UserDto;
+import com.freelance.freelancebackend.entity.Role;
 import com.freelance.freelancebackend.entity.User;
 import com.freelance.freelancebackend.exception.UserNotFoundException;
+import com.freelance.freelancebackend.repository.RoleRepository;
 import com.freelance.freelancebackend.repository.UserRepository;
+import com.freelance.freelancebackend.security.SecurityConstants;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -16,6 +22,12 @@ public class UserServiceImpl implements UserService{
   @Autowired
   private UserRepository userRepository;
 
+  @Autowired
+  private RoleRepository roleRepository;
+
+  @Autowired
+  private BCryptPasswordEncoder bCryptPasswordEncoder;
+  
   @Override
   public User getUser(Long userId) {
 
@@ -35,14 +47,14 @@ public class UserServiceImpl implements UserService{
   @Override
   public User createUser(User user) {
       
-    //   Role role = roleRepository.findById(SecurityConstants.DEFAULT_ROLE).get();    
+    Role role = roleRepository.findById(SecurityConstants.DEFAULT_ROLE).get();    
     //   user.setCreatedOn(GlobalMethods.dateTimeFormatter(LocalDateTime.now()));
-    //   user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-    //   role.getUsers().add(user);
+      user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+      role.getUsers().add(user);
       User savedUser = userRepository.save(user);
     //   cart.setUser(savedUser);
     //   cartRepository.save(cart);
-    //   roleRepository.save(role);
+      roleRepository.save(role);
       return savedUser;
 
   }
